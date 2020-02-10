@@ -35,10 +35,20 @@ class App extends Component {
   }
 
   render() {
+    // Inline Style possibility, scoped to this component
+    const style = {
+      backgroundColor: 'white',
+      font: 'inherit',
+      border: '1px solid blue',
+      padding: '8px',
+      cursor: 'pointer'
+    }
+
     return (
       <div className="App">
         <h1>Hi, I'm a React App</h1>
         <button
+          style={style}
           // This can be inefficient but it is one option to pass variables to the function
           onClick={() => this.switchNameHandler('Maximilian!!')}>Switch</button>
         <Person
