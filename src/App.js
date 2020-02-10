@@ -8,30 +8,51 @@ class App extends Component {
      persons: [
          { name: 'Max', age: 28 },
          { name: 'Manu', age: 29 },
-         { name: 'Stephanie', age: 27 },
+         { name: 'Stephanie', age: 26 },
      ],
      otherState: 'Test'
   }
 
-  switchNameHandler = () => {
+  switchNameHandler = (newName) => {
     // Component Object that we extend has a method call setState()
     this.setState({
       persons: [
-        { name: 'Maximilian', age: 28 },
+        { name: newName, age: 28 },
         { name: 'Manu', age: 29 },
-        { name: 'Stephanie', age: 26 },
+        { name: 'Stephanie', age: 27 },
       ],
     });
   };
+
+  nameChangedHandler = (event) => {
+    this.setState({
+      persons: [
+        { name: 'Max', age: 28 },
+        { name: event.target.value, age: 29 },
+        { name: 'Stephanie', age: 26 },
+      ],
+    });
+  }
 
   render() {
     return (
       <div className="App">
         <h1>Hi, I'm a React App</h1>
-        <button onClick={this.switchNameHandler}>Switch</button>
-        <Person name={this.state.persons[0].name} age={this.state.persons[0].age} />
-        <Person name={this.state.persons[1].name} age={this.state.persons[1].age}>My Hobbies: Raching</Person>
-        <Person name={this.state.persons[2].name} age={this.state.persons[2].age}/>
+        <button
+          // This can be inefficient but it is one option to pass variables to the function
+          onClick={() => this.switchNameHandler('Maximilian!!')}>Switch</button>
+        <Person
+          name={this.state.persons[0].name} 
+          age={this.state.persons[0].age} />
+        <Person 
+          name={this.state.persons[1].name} 
+          age={this.state.persons[1].age}
+          changed={this.nameChangedHandler}
+          // This is the more efficient way to pass variables to the function
+          click={this.switchNameHandler.bind(this, 'Manu')}>My Hobbies: Raching</Person>
+        <Person 
+          name={this.state.persons[2].name} 
+          age={this.state.persons[2].age}/>
       </div>
       
     );
