@@ -6,32 +6,43 @@ import Person from './Person/Person';
 class App extends Component {
   state = {
      persons: [
-         { name: 'Max', age: 28 },
-         { name: 'Manu', age: 29 },
-         { name: 'Stephanie', age: 26 },
+         { id: '234kas', name: 'Max', age: 28 },
+         { id: '62k34k', name: 'Manu', age: 29 },
+         { id: '592fli', name: 'Stephanie', age: 26 },
      ],
-     otherState: 'Test'
+     otherState: 'Test',
+     showPersons: false,
   }
 
-  switchNameHandler = (newName) => {
-    // Component Object that we extend has a method call setState()
-    this.setState({
-      persons: [
-        { name: newName, age: 28 },
-        { name: 'Manu', age: 29 },
-        { name: 'Stephanie', age: 27 },
-      ],
-    });
-  };
+  deletePersonHandler = (personIndex) => {
+    // Copy the full array to prevent mutating the orginial state
+    // const persons = this.state.persons.slice();
+    const persons = [...this.state.persons];
+    persons.splice(personIndex, 1);
+    this.setState({persons: persons});
+  }
 
-  nameChangedHandler = (event) => {
-    this.setState({
-      persons: [
-        { name: 'Max', age: 28 },
-        { name: event.target.value, age: 29 },
-        { name: 'Stephanie', age: 26 },
-      ],
+  nameChangedHandler = ( event, id ) => {
+    const personIndex = this.state.persons.findIndex(p => {
+      return p.id === id;
     });
+
+    // Copy the full object to prevent mutating the orginial state
+    // const person = Object.assign({}, this.state.persons[personIndex]);
+    const person = {
+      ...this.state.persons[personIndex]
+    }
+
+    person.name = event.target.value;
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+
+    this.setState({ persons: persons });
+  }
+
+  togglePersonsHandler = () => {
+    const doesShow = this.state.showPersons;
+    this.setState({showPersons: !doesShow});
   }
 
   render() {
@@ -44,25 +55,32 @@ class App extends Component {
       cursor: 'pointer'
     }
 
+    let persons = null;
+
+    if (this.state.showPersons) {
+      persons = (
+        <div>
+          {this.state.persons.map((person, index) => {
+            return <Person
+              click={() => this.deletePersonHandler(index)} 
+              name={person.name} 
+              age={person.age}
+              key={person.id} 
+                changed={(event) => this.nameChangedHandler(event, person.id)}
+              />
+          })}
+        </div>
+      );
+    }
+
     return (
       <div className="App">
         <h1>Hi, I'm a React App</h1>
         <button
           style={style}
           // This can be inefficient but it is one option to pass variables to the function
-          onClick={() => this.switchNameHandler('Maximilian!!')}>Switch</button>
-        <Person
-          name={this.state.persons[0].name} 
-          age={this.state.persons[0].age} />
-        <Person 
-          name={this.state.persons[1].name} 
-          age={this.state.persons[1].age}
-          changed={this.nameChangedHandler}
-          // This is the more efficient way to pass variables to the function
-          click={this.switchNameHandler.bind(this, 'Manu')}>My Hobbies: Raching</Person>
-        <Person 
-          name={this.state.persons[2].name} 
-          age={this.state.persons[2].age}/>
+          onClick={this.togglePersonsHandler}>Toggle Persons</button>
+          {persons}
       </div>
       
     );
